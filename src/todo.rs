@@ -23,20 +23,22 @@ impl Storage for Todolist {
     fn load(&mut self) {
         match get_list_file_path() {
             Ok(path) => {
-                match OpenOptions::new().read(true).open(path) {
-                    Ok(file) => {
-                        let metadata = file.metadata().expect("could not get file metadata");
-                        if metadata.len() != 0 {
-                            let reader = BufReader::new(file);
-                            self.items =
-                                serde_json::from_reader::<BufReader<File>, Vec<Item>>(reader)
-                                    .expect("Badly formated json");
+                if path.exists() {
+                    match OpenOptions::new().read(true).open(path) {
+                        Ok(file) => {
+                            let metadata = file.metadata().expect("could not get file metadata");
+                            if metadata.len() != 0 {
+                                let reader = BufReader::new(file);
+                                self.items =
+                                    serde_json::from_reader::<BufReader<File>, Vec<Item>>(reader)
+                                        .expect("Badly formated json");
+                            }
                         }
-                    }
-                    Err(e) => {
-                        println!("Error loading todolist file, did you command list/remove before ever adding an item? {}", e);
-                    }
-                };
+                        Err(e) => {
+                            println!("Error loading todolist file, did you command list/remove before ever adding an item? {}", e);
+                        }
+                    };
+                }
             }
 
             Err(e) => {
@@ -45,7 +47,7 @@ impl Storage for Todolist {
                     e
                 )
             }
-        };
+        }; 
     }
 
     fn save(&self) {
