@@ -12,7 +12,7 @@ pub struct Args {
 pub enum Commands {
     Add { item: String },
     Remove { itemid: u32 },
-    Complete {itemid: u32},
+    Complete { itemid: u32 },
     List,
     Clear,
 }
